@@ -1,0 +1,142 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: #555;
+    margin-top: 30px;
+}
+
+#leixings,
+#menus {
+    list-style-type: none;
+    padding: 0;
+}
+
+#leixings li {
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    padding: 10px 15px;
+    transition: transform 0.2s ease-in-out;
+}
+
+#leixings li:hover {
+    transform: translateY(-3px);
+}
+
+#menus li {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s ease-in-out;
+}
+
+#menus li:hover {
+    transform: translateY(-5px);
+}
+
+#menus li td {
+    padding: 0 10px;
+}
+
+#menus li td img {
+    border-radius: 4px;
+}
+
+#menus li td:nth-child(2) {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #333;
+}
+
+#menus li td:nth-child(3) {
+    color: #777;
+}
+
+#menus li td:nth-child(4) {
+    color: #999;
+}
+
+.quantity-cell {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+}
+
+.quantity-button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.quantity-button:hover {
+    background-color: #0056b3;
+}
+
+.quantity {
+    margin: 0 10px;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+#shopping-cart {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 30px;
+}
+
+#shopping-cart h2 {
+    margin-top: 0;
+}
+
+#cart-items {
+    list-style-type: none;
+    padding: 0;
+}
+
+#cart-items li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#cart-total {
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+#clear-cart {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+#clear-cart:hover {
+    background-color: #c82333;
+}

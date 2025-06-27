@@ -1,0 +1,20 @@
+.order-card {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+.order-card h3 {
+    margin-top: 0;
+}
+.order-card .close-order {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.order-card .close-order:hover {
+    background-color: darkred;
+}

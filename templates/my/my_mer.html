@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/templates/my/my_mer.css">
+    <!-- 引入 Font Awesome 图标库 -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <title>商家个人空间</title>
+</head>
+<body>
+<header>
+    <!-- 添加图标 -->
+    <i class="fas fa-store"></i>
+    <h1>欢迎来到商家个人空间</h1>
+</header>
+<div class="container">
+    <div class="sidebar">
+        <div class="profile">
+            <!-- 假设图片中有商家头像 -->
+            <img src="../images/uuz.jpg" alt="商家头像" class="profile-img">
+            <h2 id="sidebarMerName">{{.merName}}</h2>
+            <!-- 这里可以添加更多商家个人信息 -->
+            <p>商家名称: <span id="sidebarMerNameText">{{.merName}}</span></p>
+            <p>商家 ID: {{.merId}}</p>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#" data-target="profile-content" class="nav-item active"><i class="fas fa-user"></i> 商家信息</a></li>
+                <li><a href="#" data-target="order-content" class="nav-item"><i class="fas fa-list"></i> 订单管理</a></li>
+                <li><a href="#" data-target="menu-content" class="nav-item"><i class="fas fa-utensils"></i> 菜单</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="main-content">
+        <div id="profile-content" class="content-section active">
+            <!-- 个人信息内容 -->
+            <h2>个人信息详情</h2>
+
+            <!-- 商家信息展示区域 -->
+            <div id="merchantInfoDisplay" class="card">
+                <div class="form-group">
+                    <label>商家名称:</label>
+                    <p id="displayMerName">-</p>
+                </div>
+                <div class="form-group">
+                    <label>用户名:</label>
+                    <p id="displayUserName">-</p>
+                </div>
+                <div class="form-group">
+                    <label>商家类型:</label>
+                    <p id="displayMerType">-</p>
+                </div>
+                <button id="editProfileBtn" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> 修改信息
+                </button>
+            </div>
+
+            <!-- 商家信息编辑表单 (默认隐藏) -->
+            <div id="merchantInfoForm" class="card hidden">
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label for="profileMerName">商家名称:</label>
+                        <input type="text" id="profileMerName" name="profileMerName">
+                    </div>
+                    <div class="form-group">
+                        <label for="profileUserName">用户名:</label>
+                        <input type="text" id="profileUserName" name="profileUserName">
+                    </div>
+                    <div class="form-group">
+                        <label for="profileMerType">商家类型:</label>
+                        <select id="profileMerType" name="profileMerType">
+                            <option value="restaurant">餐厅</option>
+                            <option value="cafe">咖啡馆</option>
+                            <option value="takeout">外卖</option>
+                            <option value="bar">酒吧</option>
+                            <option value="other">其他</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" id="cancelEditBtn" class="btn btn-outline">
+                            <i class="fas fa-times"></i> 取消
+                        </button>
+                        <button type="submit" id="saveProfileBtn" class="btn btn-primary">
+                            <i class="fas fa-save"></i> 保存修改
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div id="order-content" class="content-section">
+            <!-- 订单管理内容 -->
+            <h2>订单列表</h2>
+            <table id="ordersTable">
+                <thead>
+                <tr>
+                    <th>订单编号</th>
+                    <th>顾客姓名</th>
+                    <th>订单总价</th>
+                    <th>下单时间</th>
+                    <th>订单状态</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div id="menu-content" class="content-section">
+            <!-- 菜单内容 -->
+            <h2>菜品管理</h2>
+            <div class="menu-form">
+                <form action="/addFood" method="post">
+                    <div class="form-group">
+                        <label for="foodType">菜品类型:</label>
+                        <input type="text" id="foodType" name="foodType" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="foodName">菜品名称:</label>
+                        <input type="text" id="foodName" name="foodName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="price">价格:</label>
+                        <input type="number" id="price" name="price" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="imageUrl">图片链接:</label>
+                        <input type="text" id="imageUrl" name="imageUrl">
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> 添加菜品</button>
+                </form>
+            </div>
+            <!-- 这里可以添加已有的菜品列表 -->
+            <div class="menu-list">
+                <h3>已有菜品</h3>
+                <table id="menuTable">
+                    <thead>
+                    <tr>
+                        <th>菜品名称</th>
+                        <th>菜品类型</th>
+                        <th>价格</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/templates/my/my_mer.js"></script>
+</body>
+</html>

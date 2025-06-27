@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/templates/gouMai/gouMai.css">
+</head>
+<body>
+<div class="container">
+    <div id="orderList"></div>
+    <hr class="divider">
+    <p class="total-price">订单总价: <span id="totalAmount">0</span> 元</p>
+    <form id="shippingForm">
+        <label for="name">姓名:</label>
+        <input type="text" id="name" required>
+        <label for="address">地址:</label>
+        <textarea id="address" required></textarea>
+        <input type="submit" value="提交订单">
+    </form>
+</div>
+</body>
+<script src="/templates/gouMai/gouMai.js"></script>
+</html>
