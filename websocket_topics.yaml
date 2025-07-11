@@ -1,0 +1,14 @@
+topics:
+  前端——>后端:
+    heartbeat:"心跳"
+    requestMerchantStatus:"修改商家状态为在线",
+    closeMerchantStatus:"修改商家状态为离线",
+    subscribe:"订阅主题",
+    submitOrder:"处理用户提交的订单"
+    orderPei:"商家将订单放入配送管道"
+  后端——>前端:
+    heartbeat:"心跳"
+    subscription:"通知前端订阅成功",
+    orderResult:"通知前端订单创建成功"
+    forOrderPei:"给前端配送员发送配送订单信息"
+    newOrder:"把用户提交的订单发给对应的商家"
