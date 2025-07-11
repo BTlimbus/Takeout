@@ -3,11 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <title>WebSocket Client</title>
-    <script src="/templates/news/news.js"></script>
     <link rel="stylesheet" href="/templates/news/news.css">
+    <script src="/templates/global_websocket/global_websocket.js"></script>
+    <script src="/templates/news/news.js"></script>
 </head>
 <body>
-<div id="merId">{{.merId}}</div>
-    <div id="messages"></div>
+<div class="merchant-container">
+    <!-- 页面头部 -->
+    <header class="merchant-header">
+        <h1>订单管理中心</h1>
+        <div class="status-indicator">
+            <span class="online-dot"></span>
+            <span>在线接收订单中</span>
+        </div>
+    </header>
+
+    <!-- 订单列表容器（与JS中的orderList对应） -->
+    <main class="order-container">
+        <div class="order-filters">
+            <button class="filter-btn active" data-filter="all">全部订单</button>
+            <button class="filter-btn" data-filter="pending">待处理</button>
+            <button class="filter-btn" data-filter="accepted">已接单</button>
+        </div>
+
+        <!-- 订单列表（JS会将新订单插入这里） -->
+        <div id="orderList" class="order-list">
+            <!-- 订单会通过JS动态插入 -->
+            <div class="empty-state">暂无新订单</div>
+        </div>
+    </main>
+</div>
 </body>
 </html>

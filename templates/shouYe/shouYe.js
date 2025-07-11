@@ -156,3 +156,53 @@ function createFoodCard(food) {
     `;
     return card;
 }
+document.addEventListener('DOMContentLoaded', function() {
+    const wsChannel = new BroadcastChannel('websocket-channel');
+    let connectionEstablished = false;
+
+    // 监听其他页面的连接状态
+    wsChannel.onmessage = (event) => {
+        const data = event.data;
+
+        if (data.type === 'connection-status' && data.status === 'connected') {
+            console.log(`[WebSocket] 发现其他页面已有连接 (ID: ${data.connectionId})`);
+            connectionEstablished = true;
+
+            // 无需重新连接，直接订阅消息
+            window.WebSocketManager.subscribe('merchantStatus', function(data) {
+                console.log('商家状态更新:', data);
+            });
+        }
+    };
+
+    // 页面加载时检查是否已有连接
+    wsChannel.postMessage('request-connection-status');
+
+    // 短暂延迟后，如果没有收到其他页面的响应，则初始化新连接
+    setTimeout(() => {
+        if (!connectionEstablished) {
+            console.log('[WebSocket] 没有发现活跃连接，创建新连接');
+
+            // 初始化连接并等待成功
+            window.WebSocketManager.init()
+                .then(() => {
+                    console.log('[WebSocket] 连接状态:', window.WebSocketManager.ws.readyState);
+                    const token = localStorage.getItem("authToken");
+                    const merId = localStorage.getItem("merId");
+                    console.log(token)
+                    // 订阅消息
+                    window.WebSocketManager.subscribe('merchantStatus', function(data) {
+                        console.log('商家状态更新:', data);
+                    });
+                    // 发送请求
+                    window.WebSocketManager.send({
+                        topic: 'requestMerchantStatus',
+                        payload: { merId: merId}
+                    });
+                })
+                .catch(error => {
+                    console.error('[WebSocket] 连接失败:', error);
+                });
+        }
+    }, 500); // 500ms 延迟，足够接收其他页面的响应
+});

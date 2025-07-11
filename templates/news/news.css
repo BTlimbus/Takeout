@@ -1,20 +1,271 @@
-.order-card {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
+/* 基础样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-.order-card h3 {
-    margin-top: 0;
+
+body {
+    background-color: #f5f7fa;
+    color: #333;
+    line-height: 1.6;
 }
-.order-card .close-order {
-    background-color: red;
-    color: white;
+
+/* 容器样式 */
+.merchant-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 头部样式 */
+.merchant-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.merchant-header h1 {
+    color: #2c3e50;
+    font-size: 24px;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #27ae60;
+    font-weight: 500;
+}
+
+.online-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #27ae60;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+/* 筛选按钮样式 */
+.order-filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filter-btn {
+    padding: 8px 16px;
     border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
+    border-radius: 6px;
+    background-color: #ffffff;
+    color: #333;
     cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
-.order-card .close-order:hover {
-    background-color: darkred;
+
+.filter-btn.active {
+    background-color: #3498db;
+    color: white;
+}
+
+.filter-btn:hover:not(.active) {
+    background-color: #f0f0f0;
+}
+
+/* 订单列表样式 */
+.order-list {
+    display: grid;
+    gap: 20px;
+}
+
+/* 空状态样式 */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #95a5a6;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+/* 订单卡片样式 */
+.order-card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-left: 4px solid #3498db; /* 左侧高亮边框 */
+}
+
+.order-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+}
+
+/* 订单头部 */
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.order-header h3 {
+    color: #2c3e50;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.order-status {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* 状态标签样式 */
+.order-status[data-status="pending"] {
+    background-color: #f39c12;
+    color: white;
+}
+
+.order-status[data-status="accepted"] {
+    background-color: #27ae60;
+    color: white;
+}
+
+.order-status[data-status="rejected"] {
+    background-color: #e74c3c;
+    color: white;
+}
+
+/* 订单详情样式 */
+.order-details {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px dashed #eee;
+}
+
+.order-details p {
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #555;
+}
+
+.order-details p span {
+    font-weight: 500;
+    color: #333;
+}
+
+/* 商品列表样式 */
+.order-items h4 {
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #2c3e50;
+}
+
+.order-items ul {
+    list-style: none;
+}
+
+.order-items li {
+    padding: 6px 0;
+    font-size: 14px;
+    color: #666;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.order-items li:last-child {
+    border-bottom: none;
+}
+
+/* 操作按钮样式 */
+.order-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.order-actions button {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.accept-btn {
+    background-color: #27ae60;
+    color: white;
+}
+
+.accept-btn:hover {
+    background-color: #219653;
+}
+
+.reject-btn {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.reject-btn:hover {
+    background-color: #c0392b;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .order-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .order-actions {
+        flex-direction: column;
+    }
+
+    .order-actions button {
+        width: 100%;
+    }
+}
+.close-order {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.close-order:hover {
+    background-color: #45a049;
+}
+
+.close-order:active {
+    background-color: #3d8b40;
+}
+
+.close-order:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.5);
 }

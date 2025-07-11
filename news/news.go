@@ -8,7 +8,6 @@ import (
 	"github.com/gorilla/websocket"
 	"net/http"
 	"shiZhan/structs"
-	"strconv"
 	"time"
 )
 
@@ -48,20 +47,20 @@ func Run(ginServe *gin.Engine, orders chan structs.OrderDate, chanOrderPei chan<
 			"merId": merId,
 		})
 	})
-	ginServe.GET("/merchant/:ShangjiaId", func(c *gin.Context) {
-		shangJiaId := c.Param("ShangjiaId")
-		merId, err := strconv.Atoi(shangJiaId)
-		if err != nil {
-			// 转换失败，返回错误响应
-			c.String(http.StatusBadRequest, "Invalid ShangjiaId")
-			return
-		}
-		fmt.Print(shangJiaId)
-		handleWebSocket(merId, orders, c, upgrader, db)
-	})
-	ginServe.POST("/orderPei", func(c *gin.Context) {
-		funcorderPei(c, chanOrderPei) // 将chanOrderPei传递给处理函数
-	})
+	//ginServe.GET("/merchant/:ShangjiaId", func(c *gin.Context) {
+	//	shangJiaId := c.Param("ShangjiaId")
+	//	merId, err := strconv.Atoi(shangJiaId)
+	//	if err != nil {
+	//		// 转换失败，返回错误响应
+	//		c.String(http.StatusBadRequest, "Invalid ShangjiaId")
+	//		return
+	//	}
+	//	fmt.Print(shangJiaId)
+	//	handleWebSocket(merId, orders, c, upgrader, db)
+	//})
+	//ginServe.POST("/orderPei", func(c *gin.Context) {
+	//	funcorderPei(c, chanOrderPei) // 将chanOrderPei传递给处理函数
+	//})
 
 }
 func handleWebSocket(merId int, orders chan structs.OrderDate, c *gin.Context, upgrader websocket.Upgrader, db *sql.DB) {

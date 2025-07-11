@@ -373,7 +373,7 @@ func getUser(db *sql.DB) gin.HandlerFunc {
 
 		} else {
 			var user structs.User
-			err := db.QueryRow("select userName,standing from user where userId=?", userId).Scan(&user.UserName, &user.Standing)
+			err := db.QueryRow("select userName,role from user where userId=?", userId).Scan(&user.UserName, &user.Role)
 			if err != nil {
 				c.JSON(500, gin.H{"err": err.Error()})
 				return

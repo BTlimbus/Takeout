@@ -108,7 +108,7 @@ function loadUserInfo() {
             if (result.success === 'ok' && result.user) {
                 const user = result.user;
                 const username = user.userName;
-                const userType = user.standing;
+                const userType = user.role;
 
                 elements.displayUserName.textContent = username;
                 elements.displayUserType.textContent = userType;

@@ -18,6 +18,7 @@ import (
 	"shiZhan/shouYe"
 	"shiZhan/shuJuKu"
 	"shiZhan/structs"
+	"shiZhan/websockets"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -57,8 +58,8 @@ func main() {
 	ginServe.Use(cors.New(config))
 	dengLu.ZhuCe(ginServe, db)
 	dengLu.Run(ginServe, db)
-	var orders = make(chan structs.OrderDate)
-	var orderPei = make(chan structs.OrderPei)
+	var orders = make(chan structs.OrderDate, 100)
+	var orderPei = make(chan structs.OrderPei,100)
 	defer close(orders)
 	news.Run(ginServe, orders, orderPei, db)
 	shouYe.Run(ginServe, db)
@@ -69,6 +70,7 @@ func main() {
 	gouMai.Run(ginServe, db, orders)
 	checkOrder.Run(ginServe, db)
 	search.Run(ginServe, db)
+	websockets.Run(ginServe, db, orders,orderPei)
 	//服务器端口
 	err = ginServe.Run(":8080")
 	if err != nil {

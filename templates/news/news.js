@@ -3,103 +3,164 @@ let heartbeatInterval = 10000; // 每10秒发送一次心跳
 let heartbeatTimer; // 用于心跳的定时器
 
 document.addEventListener('DOMContentLoaded', function() {
-  var merIdElement = document.getElementById('merId');
-  var merId = merIdElement ? merIdElement.textContent : null;
-  if (merId) {
-    console.log('MerId:', merId);
-    connectWebSocket(merId);
-  } else {
-    console.error('MerId element not found');
-  }
-});
+  const wsChannel = new BroadcastChannel('websocket-channel');
+  let connectionEstablished = false;
 
-function sendHeartbeat() {
-  if (ws.readyState === WebSocket.OPEN) {
-    ws.send('ping'); // 发送心跳消息
-  }
-}
+  // 监听其他页面的连接状态
+  wsChannel.onmessage = (event) => {
+    const data = event.data;
 
-function connectWebSocket(merId) {
-  const url = 'ws://localhost:8080/merchant/' + merId;
-  ws = new WebSocket(url);
-  ws.withCredentials = true;
-  ws.onopen = function() {
-    console.log('WebSocket connection established');
-    heartbeatTimer = setInterval(sendHeartbeat, heartbeatInterval); // 启动心跳
+    if (data.type === 'connection-status' && data.status === 'connected') {
+      console.log(`[WebSocket] 发现其他页面已有连接 (ID: ${data.connectionId})`);
+      connectionEstablished = true;
+
+      // 无需重新连接，直接订阅消息
+      window.WebSocketManager.subscribe('merchantStatus', function(data) {
+        console.log('商家状态更新:', data);
+      });
+    }
   };
 
-  ws.onmessage = function(event) {
-    if (event.data === 'pong') {
-      // 收到服务器的心跳响应，重置心跳计时器
-      clearInterval(heartbeatTimer);
-      heartbeatTimer = setInterval(sendHeartbeat, heartbeatInterval);
-    } else {
-      const order = JSON.parse(event.data);
-      const messagesDiv = document.getElementById('messages');
-      console.log('Received order:', event.data);
-      const newOrderDiv = document.createElement('div');
-      newOrderDiv.innerHTML = `
-        <div class="order-card">
-            <h3>新订单通知</h3>
-            <p><strong>顾客名:</strong>${order.userName}</p>
-            <p><strong>商家 ID:</strong>${order.merId}</p>
-            <p><strong>订单内容:</strong></p>
+  // 页面加载时检查是否已有连接
+  wsChannel.postMessage('request-connection-status');
+
+  // 短暂延迟后，如果没有收到其他页面的响应，则初始化新连接
+  setTimeout(() => {
+    if (!connectionEstablished) {
+      console.log('[WebSocket] 没有发现活跃连接，创建新连接');
+
+      // 初始化连接并等待成功
+      window.WebSocketManager.init()
+          .then(() => {
+            console.log('[WebSocket] 连接状态:', window.WebSocketManager.ws.readyState);
+            const token = localStorage.getItem("authToken");
+            const merId = localStorage.getItem("merId");
+            console.log(token)
+            // 订阅消息
+            window.WebSocketManager.subscribe('merchantStatus', function(data) {
+              console.log('商家状态更新:', data);
+            });
+            window.WebSocketManager.subscribe('newOrder', handleNewOrder)
+            // 发送请求
+          })
+          .catch(error => {
+            console.error('[WebSocket] 连接失败:', error);
+          });
+    }
+  }, 500);
+})
+
+// 处理后端推送的新订单
+function handleNewOrder(data) {
+    console.log('收到新订单:', data);
+    const order = data.payload; // 订单数据在payload中
+
+    // 1. 验证订单数据完整性
+    if (!order || !order.orderId) {
+        console.error('无效的订单数据:', order);
+        return;
+    }
+
+    // 2. 渲染订单到页面（示例：添加到订单列表）
+    const orderList = document.getElementById('orderList');
+    if (!orderList) {
+        console.error('未找到订单列表容器');
+        return;
+    }
+
+    // 3. 创建订单DOM元素
+    const orderItem = document.createElement('div');
+    orderItem.className = 'order-card';
+    orderItem.dataset.orderId = order.orderId; // 存储订单ID用于后续操作
+
+    // 4. 填充订单信息（根据实际字段调整）
+    orderItem.innerHTML = `
+        <div class="order-header">
+            <h3>新订单 #${order.orderId}</h3>
+            <span class="order-status">${order.status || '待处理'}</span>
+        </div>
+        <div class="order-details">
+            <p>用户：${order.userName || '未知用户'}</p>
+            <p>地址：${order.location || '未填写'}</p>
+            <p>时间：${formatTime(order.time) || '未知时间'}</p>
+            <p>总金额：¥${order.prices.toFixed(2)}</p>
+        </div>
+        <div class="order-items">
+            <h4>商品列表：</h4>
             <ul>
-                ${order.items.map(item => `<li>${item.foodName} - ${item.quantity} x $${item.price}</li>`).join('')}
+                ${order.items.map(item => `
+                    <li>${item.foodName} × ${item.quantity} - ¥${item.price.toFixed(2)}</li>
+                `).join('')}
             </ul>
             <button class="close-order">通知外卖员取餐</button>
         </div>
-      `;
-      const closeButton = newOrderDiv.querySelector('.close-order');
-      closeButton.addEventListener("click", function() {
-        sendPostRequest(order.orderId,order.userName, order.merId, "http://127.0.0.1:8080/orderPei");
-        console.log("测试点"+order.merId);
-      });
-      // 将新订单卡片添加到messagesDiv中
-      messagesDiv.appendChild(newOrderDiv);
-    }
-  };
+    `;
+    const closeButton = orderItem.querySelector('.close-order');
+    closeButton.addEventListener("click",()=>orderPei(order) )
+    // 5. 添加到页面（插入到列表顶部，优先展示新订单）
+    orderList.insertBefore(orderItem, orderList.firstChild);
 
-  ws.onclose = function(event) {
-    console.log('WebSocket connection closed', event);
-    clearInterval(heartbeatTimer); // 清除心跳定时器
-    if (event.wasClean === false || event.code !== 1000) {
-      // 如果是非正常关闭，尝试重连
-      setTimeout(() => connectWebSocket(merId), 1000); // 延迟1秒后重连
-    }
-  };
-
-  ws.onerror = function(error) {
-    console.error('WebSocket error:', error);
-  };
+    // 6. 播放提示音或显示通知（增强用户体验）
+    // playNotificationSound();
+    // showToast(`收到新订单 #${order.OrderId}`);
+}
+function orderPei(order){
+    window.WebSocketManager.send({
+        topic: 'orderPei', // 自定义消息主题，表示提交订单
+        payload:order
+    })
 }
 
-function sendPostRequest(orderId,userName, merId, url) {
-  // 创建要发送的数据对象
-  const data = {
-    orderId: orderId,
-    userName: userName,
-    merId: merId,
-  };
 
-  // 使用fetch发送POST请求
-  fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data) // 将数据对象转换为JSON字符串
-  })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json(); // 解析JSON响应
-      })
-      .then(data => {
-        console.log('Success:', data); // 处理响应数据
-      })
-      .catch((error) => {
-        console.error('Error:', error); // 处理错误
-      });
+
+
+
+
+//辅助功能，看着玩吧
+// 格式化时间（将ISO格式转为本地时间）
+function formatTime(isoTime) {
+    if (!isoTime) return '';
+    const date = new Date(isoTime);
+    return date.toLocaleString('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
 }
+//
+// // 播放提示音
+// function playNotificationSound() {
+//     const audio = new Audio('/sounds/notification.mp3'); // 替换为你的提示音路径
+//     audio.volume = 0.5;
+//     audio.play().catch(err => console.log('提示音播放失败:', err));
+// }
+//
+// // 显示 Toast 通知
+// function showToast(message) {
+//     const toast = document.createElement('div');
+//     toast.className = 'toast-notification';
+//     toast.textContent = message;
+//     document.body.appendChild(toast);
+//     setTimeout(() => toast.remove(), 3000); // 3秒后自动消失
+// }
+//
+// // 接单操作（发送WebSocket消息给后端）
+// function acceptOrder(orderId) {
+//     window.WebSocketManager.send({
+//         topic: 'acceptOrder',
+//         payload: { orderId: orderId }
+//     });
+//     // 更新页面状态
+//     document.querySelector(`.order-card[data-order-id="${orderId}"] .order-status`).textContent = '已接单';
+// }
+//
+// // 拒单操作
+// function rejectOrder(orderId) {
+//     window.WebSocketManager.send({
+//         topic: 'rejectOrder',
+//         payload: { orderId: orderId }
+//     });
+//     document.querySelector(`.order-card[data-order-id="${orderId}"] .order-status`).textContent = '已拒单';
+// }

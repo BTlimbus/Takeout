@@ -14,6 +14,7 @@ type Menu struct {
 
 // OrderDate 订单数据
 type OrderDate struct {
+	UserId   int            `json:"userId"`
 	UserName string         `json:"userName"`
 	Location string         `json:"location"`
 	MerId    int            `json:"merId"`
@@ -51,5 +52,5 @@ type Shop struct {
 // 用户
 type User struct {
 	UserName string `json:"userName"`
-	Standing string `json:"standing"`
+	Role     string `json:"role"`
 }
